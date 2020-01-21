@@ -1,16 +1,22 @@
 # OpenAuthEx
-认证
+该项目为我Java项目 [OpenAuth](https://github.com/hqs666666/OpenAuth) 的 .net core上的授权扩展，
+用于获取授权服务器下发的token
 
-```
-            services.AddOpenAuth(options =>
-            {
-                options.Authority = "http://localhost:7000";
-                options.ClientName = "OAuthClientApi";
-                options.ClientId = "042c67a73b3611ea8fdb00163e0a23b0";
-                options.ClientSecret = "113ee66b3b3611ea8fdb00163e0a23b0";
-            });
+ 添加包 `OpenAuth`
+
+> 在 `ConfigureServices` 中写如一下内容
+
+```csharp
+services.AddOpenAuth(options => { 
+    options.Authority = Configuration["OpenAuth:Authority"];
+    options.ClientId = Configuration["OpenAuth:ClientId"];
+    options.ClientSecret = Configuration["OpenAuth:ClientSecret"];
+    options.ClientName = Configuration["OpenAuth:ClientName"];
+});
 ```
 
-```
-            app.UseOpenAuth();
+> 在 `Configure` 添加以下中间件，添加之前请删除掉 `app.UseAuthorization();`
+
+```csharp
+app.UseOpenAuth();
 ```

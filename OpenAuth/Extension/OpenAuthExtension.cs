@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using OpenAuth.Middleware;
 using OpenAuth.Model;
+using OpenAuth.Service;
 
 namespace OpenAuth.Extension
 {
@@ -17,8 +18,10 @@ namespace OpenAuth.Extension
             action.Invoke(option);
 
             if (string.IsNullOrEmpty(option.ClientId) || string.IsNullOrEmpty(option.ClientSecret))
-                throw new ArgumentNullException($"{nameof(option.ClientId)} or {option.ClientSecret} must not be null");
+                throw new ArgumentNullException($"{nameof(option.ClientId)} or {nameof(option.ClientSecret)} must not be null");
 
+            services.AddScoped(o => option);
+            services.AddScoped<ITokenService, TokenService>();
             services.AddAuthentication(options =>
                 {
                     //认证middleware配置
@@ -43,7 +46,8 @@ namespace OpenAuth.Extension
         }
 
         public static void UseOpenAuth(this IApplicationBuilder app)
-        { 
+        {
+            app.UseMiddleware<TokenMiddleware>();
             app.UseMiddleware<OpenAuthMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();

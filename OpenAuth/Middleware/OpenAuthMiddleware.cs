@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using OpenAuth.Model;
 
 namespace OpenAuth.Middleware
 {
@@ -13,13 +14,13 @@ namespace OpenAuth.Middleware
         private readonly RequestDelegate _next;
         public OpenAuthMiddleware(RequestDelegate next) => _next = next;
 
-        public async Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context, OpenAuthOptions options)
         {
             var token = context.Request.Headers["Authorization"].ToString();
             if (!string.IsNullOrEmpty(token))
             {
                 token = token.Replace("Bearer ", "");
-                var url = "http://localhost:7000/oauth2/check?token=" + token;
+                var url = $"{options}/oauth2/check?token={token}";
                 var result = await GetAsync(url);
                 if (!result.ContainsKey("success") || !(bool)result["success"])
                 {
