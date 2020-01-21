@@ -20,3 +20,10 @@ services.AddOpenAuth(options => {
 ```csharp
 app.UseOpenAuth();
 ```
+
+> 请求地址
+
+```
+获取access_token：http(s)://host:port/oauth/login
+刷新token：http(s)://host:port/oauth/refresh-token
+```
