@@ -20,7 +20,7 @@ namespace OpenAuth.Middleware
             if (!string.IsNullOrEmpty(token))
             {
                 token = token.Replace("Bearer ", "");
-                var url = $"{options}/oauth2/check?token={token}";
+                var url = $"{options.Authority}/oauth2/check?token={token}";
                 var result = await GetAsync(url);
                 if (!result.ContainsKey("success") || !(bool)result["success"])
                 {

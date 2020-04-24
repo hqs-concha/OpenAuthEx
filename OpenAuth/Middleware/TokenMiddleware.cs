@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Newtonsoft.Json;
 using OpenAuth.Model;
 using OpenAuth.Service;
@@ -19,25 +18,19 @@ namespace OpenAuth.Middleware
         {
             var request = context.Request;
             var response = context.Response;
-            if (request.Path == "/oauth/login")
+            if (request.Path == "/oauth/connect")
             {
+                if (request.Method != HttpMethod.Post.ToString())
+                {
+                    response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+                    return;
+                } 
                 var code = request.Query["code"].ToString();
                 if (string.IsNullOrEmpty(code))
                 {
-                    var returnUrl = request.GetEncodedUrl();
-                    var url = $"{options.Authority}/oauth2/authorize?client_id={options.ClientId}&redirect_uri={returnUrl}" +
-                              $"&response_type=code&state=openauth&scope=userinfo";
-                    response.Redirect(url);
+                    await ResponseHandle(response, CreateErrorMsg("Code Invalid"));
                     return;
                 }
-
-                var state = request.Query["state"].ToString();
-                if (state != "openauth")
-                {
-                    await ResponseHandle(response, CreateErrorMsg("请求被篡改，state值有差异"));
-                    return;
-                }
-
                 var token = await tokenService.GetAccessToken(code);
                 await ResponseHandle(response, token);
                 return;

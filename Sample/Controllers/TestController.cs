@@ -1,6 +1,4 @@
 ﻿
-using System;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Sample.Controllers
@@ -9,10 +7,10 @@ namespace Sample.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        [HttpGet, Authorize]
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Index(string code)
         {
-            return Ok(DateTime.UtcNow);
+            return Ok(code);
         }
     }
 }
