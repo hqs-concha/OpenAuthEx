@@ -20,19 +20,19 @@ namespace OpenAuth.Middleware
             var response = context.Response;
             if (request.Path == "/oauth/connect")
             {
-                if (request.Method != HttpMethod.Post.ToString())
+                if (request.Method == HttpMethod.Post.ToString())
                 {
-                    response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
-                    return;
-                } 
-                var code = request.Query["code"].ToString();
-                if (string.IsNullOrEmpty(code))
-                {
-                    await ResponseHandle(response, CreateErrorMsg("Code Invalid"));
+                    var code = request.Form["code"].ToString();
+                    if (string.IsNullOrEmpty(code))
+                    {
+                        await ResponseHandle(response, CreateErrorMsg("Code Invalid"));
+                        return;
+                    }
+                    var token = await tokenService.GetAccessToken(code);
+                    await ResponseHandle(response, token);
                     return;
                 }
-                var token = await tokenService.GetAccessToken(code);
-                await ResponseHandle(response, token);
+                response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
                 return;
             }
             else if (request.Path == "/oauth/refresh-token")
@@ -42,6 +42,17 @@ namespace OpenAuth.Middleware
                     var param = request.Form["refresh_token"].ToString();
                     var token = await tokenService.RefreshToken(param);
                     await ResponseHandle(response, token);
+                    return;
+                }
+                response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+                return;
+            }
+            else if (request.Path == "/oauth/logout")
+            {
+                if (request.Method == HttpMethod.Post.ToString())
+                {
+                    await tokenService.Logout();
+                    await ResponseHandle(response, null);
                     return;
                 }
                 response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;

@@ -8,5 +8,6 @@ namespace OpenAuth.Service
     {
         Task<string> GetAccessToken(string code);
         Task<string> RefreshToken(string token);
+        Task Logout();
     }
 }

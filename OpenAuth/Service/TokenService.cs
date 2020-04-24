@@ -35,10 +35,16 @@ namespace OpenAuth.Service
             var data = new
             {
                 client_id = _options.ClientId,
+                client_secret = _options.ClientSecret,
                 grant_type = "refresh_token",
                 refresh_token = token
             };
             return await PostAsync("oauth2/refresh-token", data);
+        }
+
+        public async Task Logout()
+        {
+            await PostAsync("oauth2/logout", null);
         }
 
         private async Task<string> PostAsync(string url, object data)

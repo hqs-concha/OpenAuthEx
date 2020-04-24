@@ -26,6 +26,15 @@ namespace Sample
                 options.ClientSecret = Configuration["OpenAuth:ClientSecret"];
                 options.ClientName = Configuration["OpenAuth:ClientName"];
             });
+            services.AddCors(options =>
+            {
+                options.AddPolicy("custom", policy =>
+                {
+                    policy.AllowAnyHeader();
+                    policy.AllowAnyOrigin();
+                    policy.AllowAnyHeader();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,6 +44,8 @@ namespace Sample
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors("custom");
 
             app.UseHttpsRedirection();
 
