@@ -24,6 +24,6 @@ app.UseOpenAuth();
 > 请求地址
 
 ```
-获取access_token：http(s)://host:port/oauth/login
+获取access_token：http(s)://host:port/oauth/connect
 刷新token：http(s)://host:port/oauth/refresh-token
 ```
