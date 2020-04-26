@@ -17,6 +17,9 @@ namespace OpenAuth.Extension
             var option = new OpenAuthOptions();
             action.Invoke(option);
 
+            if (string.IsNullOrEmpty(option.Authority))
+                throw new ArgumentNullException($"{nameof(option.Authority)} must be not null");
+
             if (string.IsNullOrEmpty(option.ClientId) || string.IsNullOrEmpty(option.ClientSecret))
                 throw new ArgumentNullException($"{nameof(option.ClientId)} or {nameof(option.ClientSecret)} must not be null");
 

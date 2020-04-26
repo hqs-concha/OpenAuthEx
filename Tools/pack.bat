@@ -8,6 +8,6 @@ dotnet build
 dotnet pack -p:PackageVersion=%package_version% -c release
 
 @echo push
-dotnet nuget push .\bin\Release\OpenAuth.%package_version%.nupkg -k %nuget_key% -s %nuget_source% --timeout 360
+dotnet nuget push .\bin\Release\Tools.%package_version%.nupkg -k %nuget_key% -s %nuget_source% --timeout 360
 
 @pause

@@ -1,5 +1,7 @@
 ﻿
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Tools.Utils;
 
 namespace Sample.Controllers
 {
@@ -8,9 +10,10 @@ namespace Sample.Controllers
     public class TestController : ControllerBase
     {
         [HttpGet]
-        public IActionResult Index(string code)
+        public async Task<IActionResult> Index()
         {
-            return Ok(code);
+            var result = await HttpHelper.GetStringAsync("http://account.hqs.pub");
+            return Ok(result);
         }
     }
 }

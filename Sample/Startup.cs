@@ -20,12 +20,14 @@ namespace Sample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddOpenAuth(options => { 
+            services.AddOpenAuth(options =>
+            {
                 options.Authority = Configuration["OpenAuth:Authority"];
                 options.ClientId = Configuration["OpenAuth:ClientId"];
                 options.ClientSecret = Configuration["OpenAuth:ClientSecret"];
                 options.ClientName = Configuration["OpenAuth:ClientName"];
             });
+
             services.AddCors(options =>
             {
                 options.AddPolicy("custom", policy =>
