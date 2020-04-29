@@ -78,5 +78,28 @@ namespace Tools.Utils
         }
 
         #endregion
+
+        #region SHA256
+
+        /// <summary>
+        /// SHA256 加密
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static string Sha256(string data)
+        {
+            var bytes = Encoding.UTF8.GetBytes(data);
+            var hash = SHA256Managed.Create().ComputeHash(bytes);
+
+            var builder = new StringBuilder();
+            for (int i = 0; i < hash.Length; i++)
+            {
+                builder.Append(hash[i].ToString("X2"));
+            }
+
+            return builder.ToString();
+        }
+
+        #endregion
     }
 }
