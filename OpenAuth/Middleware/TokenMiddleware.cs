@@ -52,7 +52,7 @@ namespace OpenAuth.Middleware
                 if (request.Method == HttpMethod.Post.ToString())
                 {
                     await tokenService.Logout();
-                    await ResponseHandle(response, null);
+                    await ResponseHandle(response, CreateResultMsg("退出成功"));
                     return;
                 }
                 response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
@@ -67,6 +67,18 @@ namespace OpenAuth.Middleware
             response.ContentType = "application/json;charset=utf-8";
             response.StatusCode = (int)HttpStatusCode.OK;
             await response.WriteAsync(data);
+        }
+
+        private string CreateResultMsg(string message)
+        {
+            var result = new
+            {
+                success = true,
+                code = 0,
+                message = message
+            };
+            var data = JsonConvert.SerializeObject(result);
+            return data;
         }
 
         private string CreateErrorMsg(string message)

@@ -16,19 +16,22 @@ namespace OpenAuth.Middleware
 
         public async Task Invoke(HttpContext context, OpenAuthOptions options)
         {
-            var token = context.Request.Headers["Authorization"].ToString();
-            if (!string.IsNullOrEmpty(token))
+            if (context.Request.Path != "/oauth/connect" && context.Request.Path != "/oauth/refresh-token")
             {
-                token = token.Replace("Bearer ", "");
-                var url = $"{options.Authority}/oauth2/check?token={token}";
-                var result = await GetAsync(url);
-                if (!result.ContainsKey("success") || !(bool)result["success"])
+                var token = context.Request.Headers["Authorization"].ToString();
+                if (!string.IsNullOrEmpty(token))
                 {
-                    var jsonStr = JsonConvert.SerializeObject(result);
-                    context.Response.ContentType = "application/json;charset=utf-8";
-                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    await context.Response.WriteAsync(jsonStr);
-                    return;
+                    token = token.Replace("Bearer ", "");
+                    var url = $"{options.Authority}/oauth2/check-token?token={token}";
+                    var result = await GetAsync(url);
+                    if (!result.ContainsKey("success") || !(bool)result["success"])
+                    {
+                        var jsonStr = JsonConvert.SerializeObject(result);
+                        context.Response.ContentType = "application/json;charset=utf-8";
+                        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                        await context.Response.WriteAsync(jsonStr);
+                        return;
+                    }
                 }
             }
 

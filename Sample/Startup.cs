@@ -1,8 +1,11 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Mvc.Core.Filter;
+using Mvc.Core.Middleware;
 using OpenAuth.Extension;
 
 namespace Sample
@@ -19,7 +22,8 @@ namespace Sample
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers(options => options.Filters.Add(typeof(VaildateFilter)))
+                .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
             services.AddOpenAuth(options =>
             {
                 options.Authority = Configuration["OpenAuth:Authority"];
@@ -34,7 +38,7 @@ namespace Sample
                 {
                     policy.AllowAnyHeader();
                     policy.AllowAnyOrigin();
-                    policy.AllowAnyHeader();
+                    policy.AllowAnyMethod();
                 });
             });
         }
@@ -48,6 +52,7 @@ namespace Sample
             }
 
             app.UseCors("custom");
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseHttpsRedirection();
 
