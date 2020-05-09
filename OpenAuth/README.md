@@ -24,7 +24,7 @@ app.UseOpenAuth();
 
 ### 内置地址
 
-> 获取token `http(s)://host:port/oauth/connect`
-> 刷新token `http(s)://host:port/oauth/refresh-token`
-> 每个请求都将验证token是否有效
+1. 获取token `http(s)://host:port/oauth/connect`
+2. 刷新token `http(s)://host:port/oauth/refresh-token`
+3. 每个请求都将验证token是否有效
 
