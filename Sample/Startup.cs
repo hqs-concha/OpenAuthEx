@@ -1,9 +1,9 @@
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using Mvc.Core.Filter;
 using Mvc.Core.Middleware;
 using OpenAuth.Extension;
@@ -22,8 +22,26 @@ namespace Sample
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers(options => options.Filters.Add(typeof(VaildateFilter)))
+            #region DI
+
+            services.AddMemoryCache();
+            services.AddHttpContextAccessor();
+
+            #endregion
+
+            #region MVC
+
+            services.AddControllers(options =>
+                {
+                    options.Filters.Add(typeof(ValidateFilter));
+                    //options.Filters.Add(typeof(AntiReplayFilter));
+                })
                 .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
+
+            #endregion
+
+            #region OAuth
+
             services.AddOpenAuth(options =>
             {
                 options.Authority = Configuration["OpenAuth:Authority"];
@@ -31,6 +49,10 @@ namespace Sample
                 options.ClientSecret = Configuration["OpenAuth:ClientSecret"];
                 options.ClientName = Configuration["OpenAuth:ClientName"];
             });
+
+            #endregion
+
+            #region Cors
 
             services.AddCors(options =>
             {
@@ -41,6 +63,21 @@ namespace Sample
                     policy.AllowAnyMethod();
                 });
             });
+
+            #endregion
+
+            #region Swagger
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("V1", new OpenApiInfo
+                {
+                    Version = "V1",
+                });
+                c.OrderActionsBy(o => o.RelativePath);
+            });
+
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,9 +93,17 @@ namespace Sample
 
             app.UseHttpsRedirection();
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint($"/swagger/V1/swagger.json", "V1");
+                c.RoutePrefix = "";
+            });
+
+
             app.UseRouting();
 
-            app.UseOpenAuth();
+            //app.UseOpenAuth();
 
             app.UseEndpoints(endpoints =>
             {

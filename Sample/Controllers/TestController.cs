@@ -1,27 +1,33 @@
 ﻿
-using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Mvc.Core.Attribute;
 using Sample.Model;
 using Tools.Utils;
 
 namespace Sample.Controllers
 {
-    [Route("client")]
+    [Route("test")]
     [ApiController]
     public class TestController : ControllerBase
     {
-        [HttpPost("list")]
-        public async Task<IActionResult> Index(ValidateDto dto)
+        [HttpGet("list")]
+        public async Task<IActionResult> Index([FromQuery] ValidateDto dto)
         {
             var result = await HttpHelper.GetStringAsync("http://account.hqs.pub");
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpPost, IgnoreVerify]
         public IActionResult Test([FromQuery]ValidateDto dto)
         {
-            throw new Exception("asdasd");
+            return Ok(dto);
+        }
+
+        [HttpPost("upload"), IgnoreAntiReplay]
+        public IActionResult Upload([FromBody] IFormFile file)
+        {
             return Ok();
         }
     }

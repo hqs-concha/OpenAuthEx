@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -42,6 +43,14 @@ namespace OpenAuth.Service
             return await PostAsync("oauth2/refresh-token", data);
         }
 
+        public async Task<string> CheckToken(string token)
+        {
+            var url = $"{_options.Authority}/oauth2/check-token?token={token}";
+            var result = await GetAsync(url);
+            var jsonStr = JsonConvert.SerializeObject(result);
+            return jsonStr;
+        }
+
         public async Task Logout()
         {
             await PostAsync("oauth2/logout", null);
@@ -58,6 +67,16 @@ namespace OpenAuth.Service
                 var response = await client.PostAsync(url, content);
                 var result = await response.Content.ReadAsStringAsync();
                 return result;
+            }
+        }
+
+        private static async Task<Dictionary<string, object>> GetAsync(string url)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                var response = await client.GetStringAsync(url);
+                return JsonConvert.DeserializeObject<Dictionary<string, object>>(response);
             }
         }
     }

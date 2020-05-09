@@ -8,6 +8,9 @@ using Tools.Utils;
 
 namespace Mvc.Core.Middleware
 {
+    /// <summary>
+    /// 全局异常处理
+    /// </summary>
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;

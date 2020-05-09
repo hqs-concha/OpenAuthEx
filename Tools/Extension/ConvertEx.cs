@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Tools.Extension
 {
@@ -345,6 +346,15 @@ namespace Tools.Extension
         #endregion
 
         #region Stream
+
+        public static async Task<string> GetStringAsync(this Stream stream)
+        {
+            var reader = new StreamReader(stream);
+            var result = await reader.ReadToEndAsync();
+            reader.Dispose();
+            stream.Dispose();
+            return result;
+        }
 
         public static string GetString(this Stream stream)
         {
