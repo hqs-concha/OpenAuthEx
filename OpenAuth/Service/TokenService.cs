@@ -43,12 +43,12 @@ namespace OpenAuth.Service
             return await PostAsync("oauth2/refresh-token", data);
         }
 
-        public async Task<string> CheckToken(string token)
+        public async Task<bool> CheckToken(string token)
         {
             var url = $"{_options.Authority}/oauth2/check-token?token={token}";
             var result = await GetAsync(url);
-            var jsonStr = JsonConvert.SerializeObject(result);
-            return jsonStr;
+            if (!result.ContainsKey("success")) return false;
+            return (bool) result["success"];
         }
 
         public async Task Logout()

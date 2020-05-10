@@ -34,7 +34,7 @@ namespace Sample
             services.AddControllers(options =>
                 {
                     options.Filters.Add(typeof(ValidateFilter));
-                    //options.Filters.Add(typeof(AntiReplayFilter));
+                    options.Filters.Add(typeof(AntiReplayFilter));
                 })
                 .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
 
@@ -103,7 +103,7 @@ namespace Sample
 
             app.UseRouting();
 
-            //app.UseOpenAuth();
+            app.UseOpenAuth();
 
             app.UseEndpoints(endpoints =>
             {

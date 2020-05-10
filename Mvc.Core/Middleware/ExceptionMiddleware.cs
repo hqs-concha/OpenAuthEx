@@ -29,21 +29,21 @@ namespace Mvc.Core.Middleware
                 if (e is CustomException)
                 {
                     result = CreateErrorMsg(e.Message);
+                    await ResponseHandle(context.Response, (int)HttpStatusCode.OK,result);
                 }
                 else
                 {
                     result = CreateErrorMsg("系统错误");
                     logger.LogError($"错误：{e.Message}，详情{e.StackTrace}");
+                    await ResponseHandle(context.Response, (int)HttpStatusCode.InternalServerError, result);
                 }
-
-                await ResponseHandle(context.Response, result);
             }
         }
 
-        private async Task ResponseHandle(HttpResponse response, string data)
+        private async Task ResponseHandle(HttpResponse response, int code ,string data)
         {
             response.ContentType = "application/json;charset=utf-8";
-            response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            response.StatusCode = code;
             await response.WriteAsync(data);
         }
 

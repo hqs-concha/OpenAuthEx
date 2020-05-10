@@ -37,13 +37,13 @@ namespace Mvc.Core.Utils
                 return false;
 
             var requestTime = DateTimeHelper.StampToDateTime(headers["X-CA-TIMESTAMP"].ToString());
-            if ((DateTime.Now - requestTime).Minutes >= 10)
+            if ((DateTime.Now - requestTime).Minutes >= 1)
                 return false;
 
             var nonce = cache.Get<string>($"nonce-{requestTime}");
             if (!string.IsNullOrEmpty(nonce) && nonce.Equals(headers["X-CA-NONCE"].ToString()))
                 return false;
-            cache.Set($"nonce-{requestTime}", nonce, TimeSpan.FromMinutes(10));
+            cache.Set($"nonce-{requestTime}", nonce, TimeSpan.FromMinutes(5));
 
             return true;
         }
@@ -71,6 +71,8 @@ namespace Mvc.Core.Utils
                 }
             }
             requestData.Add("key", request.Headers["X-CA-Key"].ToString());
+            requestData.Add("nonce", request.Headers["X-CA-NONCE"].ToString());
+            requestData.Add("timestamp", request.Headers["X-CA-TIMESTAMP"].ToString());
             var body = await request.Body.GetStringAsync();
             if (string.IsNullOrEmpty(body)) return requestData;
 

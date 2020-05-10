@@ -1,9 +1,11 @@
 ﻿
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Mvc.Core.Attribute;
 using Sample.Model;
+using Tools.Exception;
 using Tools.Utils;
 
 namespace Sample.Controllers
@@ -12,11 +14,10 @@ namespace Sample.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        [HttpGet("list")]
-        public async Task<IActionResult> Index([FromQuery] ValidateDto dto)
+        [HttpGet("list"), Authorize]
+        public IActionResult Index([FromQuery] ValidateDto dto)
         {
-            var result = await HttpHelper.GetStringAsync("http://account.hqs.pub");
-            return Ok(result);
+            throw new CustomException("aaa");
         }
 
         [HttpPost, IgnoreVerify]

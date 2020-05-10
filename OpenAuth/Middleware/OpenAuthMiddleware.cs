@@ -19,11 +19,14 @@ namespace OpenAuth.Middleware
                 if (!string.IsNullOrEmpty(token) && token.Trim() != "Bearer")
                 {
                     token = token.Replace("Bearer ", "");
-                    var jsonStr = await tokenService.CheckToken(token);
-                    context.Response.ContentType = "application/json;charset=utf-8";
-                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    await context.Response.WriteAsync(jsonStr);
-                    return;
+                    var temp = await tokenService.CheckToken(token);
+                    if (!temp)
+                    {
+                        context.Response.ContentType = "application/json;charset=utf-8";
+                        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                        await context.Response.WriteAsync("token invalid");
+                        return;
+                    }
                 }
             }
 
