@@ -89,6 +89,7 @@ namespace Sample
             }
 
             app.UseCors("custom");
+            app.UseMiddleware<PostBodyHandlerMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseHttpsRedirection();

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
@@ -73,7 +74,14 @@ namespace Mvc.Core.Utils
             requestData.Add("key", request.Headers["X-CA-Key"].ToString());
             requestData.Add("nonce", request.Headers["X-CA-NONCE"].ToString());
             requestData.Add("timestamp", request.Headers["X-CA-TIMESTAMP"].ToString());
-            var body = await request.Body.GetStringAsync();
+
+            // 请求流内容只能读取一次，配置 PostBodyHandlerMiddleware 中间件后可以多次读取，
+            // 但Position必须为0才能读取到内容，读取完成之后，从新将 Position 设置为 0
+            if (request.Body.Position > 0) request.Body.Position = 0;
+            var readerStream = new StreamReader(request.Body);
+            var body = await readerStream.ReadToEndAsync();
+            request.Body.Position = 0;
+
             if (string.IsNullOrEmpty(body)) return requestData;
 
             var dic = body.ToModel<SortedDictionary<string, object>>();
