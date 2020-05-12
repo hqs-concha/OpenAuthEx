@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -39,7 +40,7 @@ namespace Mvc.Core.Filter
 
                 var dataDic = await AntiReplayHelper.GetRequestData(request);
                 var dataStr = AntiReplayHelper.DicToString(dataDic);
-                var sign = SecretHelper.Md5(dataStr);
+                var sign = SecretHelper.Md5(HttpUtility.UrlEncode(dataStr));
                 _logger.LogInformation($"request json data:{dataStr}, generate sign:{sign}, request sign:{request.Headers["X-CA-SIGNATURE"].ToString()}");
                 if (!sign.Equals(request.Headers["X-CA-SIGNATURE"].ToString(), StringComparison.OrdinalIgnoreCase))
                 {
