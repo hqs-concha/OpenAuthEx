@@ -13,7 +13,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Mvc.Core\Mvc.Core.csproj" />
     <ProjectReference Include="..\OpenAuth\OpenAuth.csproj" />
-    <ProjectReference Include="..\Tools\Tools.csproj" />
   </ItemGroup>
 
 

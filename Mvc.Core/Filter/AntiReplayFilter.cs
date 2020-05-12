@@ -40,8 +40,9 @@ namespace Mvc.Core.Filter
 
                 var dataDic = await AntiReplayHelper.GetRequestData(request);
                 var dataStr = AntiReplayHelper.DicToString(dataDic);
-                var sign = SecretHelper.Md5(HttpUtility.UrlEncode(dataStr));
-                _logger.LogInformation($"request json data:{dataStr}, generate sign:{sign}, request sign:{request.Headers["X-CA-SIGNATURE"].ToString()}");
+                var encode = HttpUtility.UrlEncode(dataStr)?.ToLower().Replace("+","%20");
+                var sign = SecretHelper.Md5(encode);
+                _logger.LogInformation($"request json data:{encode}, generate sign:{sign}, request sign:{request.Headers["X-CA-SIGNATURE"].ToString()}");
                 if (!sign.Equals(request.Headers["X-CA-SIGNATURE"].ToString(), StringComparison.OrdinalIgnoreCase))
                 {
                     ResponseHandle(context, "Incorrect signature");

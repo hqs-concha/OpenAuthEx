@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Mvc.Core.Extension;
 using Mvc.Core.Filter;
 using Mvc.Core.Middleware;
 using OpenAuth.Extension;
@@ -31,12 +32,7 @@ namespace Sample
 
             #region MVC
 
-            services.AddControllers(options =>
-                {
-                    options.Filters.Add(typeof(ValidateFilter));
-                    options.Filters.Add(typeof(AntiReplayFilter));
-                })
-                .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
+            services.AddControllers().AddAntiReplay().AddValidate();
 
             #endregion
 

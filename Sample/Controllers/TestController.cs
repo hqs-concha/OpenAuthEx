@@ -1,29 +1,29 @@
 ﻿
-using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Mvc.Core.Attribute;
 using Sample.Model;
 using Tools.Exception;
-using Tools.Utils;
 
 namespace Sample.Controllers
 {
     [Route("test")]
-    [ApiController]
+    [ApiController, AllowAnonymous]
     public class TestController : ControllerBase
     {
-        [HttpGet("list"), Authorize]
-        public IActionResult Index([FromQuery] ValidateDto dto)
+        [HttpPost("list")]
+        public IActionResult Index([FromBody] ValidateDto dto)
         {
             throw new CustomException("aaa");
         }
 
-        [HttpPost, IgnoreVerify]
-        public IActionResult Test([FromQuery]ValidateDto dto)
+        [HttpPost]
+        public IActionResult Test([FromForm]ValidateDto dto)
         {
-            return Ok(dto);
+            var name = HttpUtility.UrlEncode(dto.Id);
+            return Ok(name);
         }
 
         [HttpPost("upload"), IgnoreAntiReplay]
